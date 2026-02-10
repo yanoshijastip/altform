@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Yanoshi Jastip - Indo Japan</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script src='https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js'></script>
+    
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --accent: #0ea5e9;
+            --success: #10b981; 
+            --success-dark: #059669;
+            --error: #ef4444;
+            --surface: #ffffff;
+            --bg-color: #f1f5f9;
+            --text-main: #1e293b;
+            --text-light: #64748b;
+            --radius: 16px;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-main);
+            margin: 0; padding: 0;
+            padding-bottom: 120px;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* --- HEADER --- */
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 20px;
+            position: sticky; top: 0; z-index: 100;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex; align-items: center; justify-content: space-between;
+            backdrop-filter: blur(10px);
+        }
+        .header img { height: 32px; width: auto; }
+        .header h1 { margin: 0; font-size: 1rem; color: var(--primary); font-weight: 800; }
+        .header-link { text-decoration: none; font-size: 1.2rem; }
+
+        /* --- CONTAINER --- */
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+
+        /* --- SECTIONS --- */
+        .form-section {
+            background: var(--surface);
+            border-radius: var(--radius);
+            padding: 20px; margin-bottom: 20px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .section-title {
+            font-size: 1.1rem; font-weight: 700; color: var(--primary);
+            margin-top: 0; margin-bottom: 15px; padding-bottom: 10px;
+            border-bottom: 2px solid #f1f5f9;
+        }
+
+        /* --- INPUTS --- */
+        .input-group { margin-bottom: 18px; }
+        label { display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 6px; }
+        .required::after { content: ' *'; color: var(--error); }
+
+        input, textarea, select {
+            width: 100%; padding: 14px; border: 2px solid #e2e8f0; border-radius: 12px;
+            font-family: inherit; font-size: 1rem; box-sizing: border-box;
+            transition: border-color 0.2s; -webkit-appearance: none; appearance: none;
+            background-color: #fff;
+        }
+        input:focus, textarea:focus, select:focus { outline: none; border-color: var(--primary); }
+
+        /* FIX CHECKBOX */
+        input[type="checkbox"] {
+            -webkit-appearance: checkbox !important; appearance: auto !important;
+            width: 20px !important; height: 20px !important;
+            border: 1px solid #cbd5e1 !important; padding: 0 !important; margin-right: 10px;
+            accent-color: var(--primary); cursor: pointer; display: inline-block;
+        }
+
+        /* --- UPLOAD FOTO --- */
+        .file-upload-wrapper {
+            border: 2px dashed #cbd5e1; border-radius: 12px;
+            padding: 20px; text-align: center; cursor: pointer;
+            background: #f8fafc; position: relative; transition: all 0.2s;
+        }
+        .file-upload-wrapper:hover { border-color: var(--primary); background: #eff6ff; }
+        
+        .file-upload-wrapper input { 
+            position: absolute; width: 100%; height: 100%; top: 0; left: 0; 
+            opacity: 0; cursor: pointer; z-index: 10; 
+        }
+
+        /* --- PREVIEW FOTO --- */
+        #preview-container { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+        .img-card { position: relative; width: 70px; height: 70px; }
+        .img-card img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; border: 1px solid #ddd; }
+        .del-btn {
+            position: absolute; top: -5px; right: -5px; background: var(--error); color: white;
+            border-radius: 50%; width: 20px; height: 20px; display: flex; 
+            align-items: center; justify-content: center; font-size: 12px; cursor: pointer;
+            border: 2px solid #fff; z-index: 20;
+        }
+
+        /* --- GRID ALAMAT --- */
+        .japan-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; }
+        .full-col { grid-column: 1 / -1; }
+        .sub-lbl { font-size: 0.75rem; color: var(--text-light); margin-bottom: 4px; font-weight: 500; }
+
+        /* --- RADIO CARDS --- */
+        .radio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .radio-item { position: relative; }
+        .radio-item input { position: absolute; opacity: 0; }
+        .radio-content {
+            display: flex; align-items: center; justify-content: center; padding: 12px;
+            border: 2px solid #e2e8f0; border-radius: 12px; font-weight: 600; font-size: 0.9rem;
+            background: #fff; color: var(--text-light); transition: all 0.2s;
+        }
+        .radio-item input:checked + .radio-content {
+            border-color: var(--primary); background: #eff6ff; color: var(--primary);
+        }
+
+        /* --- FOOTER --- */
+        .fixed-footer {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: rgba(255, 255, 255, 0.95); padding: 15px 20px;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.05); z-index: 99; backdrop-filter: blur(5px);
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .btn-submit {
+            width: 100%; max-width: 600px; padding: 16px;
+            background: linear-gradient(135deg, var(--primary) 0%, #0ea5e9 100%);
+            color: white; border: none; border-radius: 12px;
+            font-size: 1.1rem; font-weight: 700; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); transition: transform 0.2s;
+        }
+        .btn-submit:active { transform: scale(0.98); }
+        .btn-submit:disabled { background: #cbd5e1; cursor: not-allowed; box-shadow: none; }
+
+        /* --- MODAL POPUPS --- */
+        .overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.85); z-index: 2000;
+            display: none; justify-content: center; align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        .modal-box {
+            background: white; width: 90%; max-width: 500px; max-height: 85vh;
+            border-radius: 20px; padding: 25px; display: flex; flex-direction: column;
+            animation: popIn 0.3s ease; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5);
+        }
+        @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .modal-scroll {
+            flex: 1; overflow-y: auto; background: #f8fafc; padding: 15px;
+            border: 1px solid #e2e8f0; border-radius: 12px; margin-bottom: 15px;
+            font-size: 0.9rem; line-height: 1.6; color: #334155;
+        }
+        .modal-scroll img { max-width: 100%; border-radius: 8px; margin: 10px 0; border: 1px solid #e2e8f0; }
+
+        .modal-actions { border-top: 1px solid #f1f5f9; padding-top: 15px; }
+        
+        .btn-modal {
+            width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: bold;
+            cursor: pointer; font-size: 1rem; margin-top: 10px;
+        }
+        .btn-primary-modal { background: var(--primary); color: white; }
+        .btn-secondary-modal { background: #f1f5f9; color: var(--text-main); border: 1px solid #cbd5e1; }
+        
+        .warning-box {
+            background: #fff7ed; border: 1px solid #fdba74; padding: 15px;
+            border-radius: 12px; font-size: 0.9rem; color: #9a3412; margin-bottom: 20px; line-height: 1.5;
+        }
+
+        /* SCAN STATUS */
+        #scan-status { margin-top: 10px; padding: 10px; border-radius: 8px; font-size: 0.85rem; display: none; transition: all 0.3s; }
+        .scan-ok { background: #ecfdf5; color: var(--success-dark); border: 1px solid #6ee7b7; }
+        .scan-err { background: #fef2f2; color: var(--error); border: 1px solid #fecaca; }
+        .scan-load { background: #eff6ff; color: var(--primary); border: 1px solid #bfdbfe; }
+
+        /* LOADER */
+        #loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.95); z-index: 5000;
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+        }
+        .spinner {
+            width: 50px; height: 50px; border: 5px solid #e2e8f0;
+            border-top: 5px solid var(--primary); border-radius: 50%;
+            animation: spin 1s linear infinite; margin-bottom: 15px;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div style="display: flex; align-items: center; gap: 10px;">
+        <img src="https://yanoshijapan.github.io/jastip/jastip%202.png" alt="Logo">
+        <h1>Indo - Jepang</h1>
+    </div>
+    <a href="https://yanoshijapan.github.io/jastipyanoshi/" class="header-link">🌐</a>
+</div>
+
+<div class="container">
+    <form id="submissionForm" novalidate>
+        
+        <section class="form-section">
+            <div class="section-title">📅 Tanggal Keberangkatan</div>
+            <div class="input-group">
+                <label class="required">Pilih Jadwal Jastip</label>
+                <select name="tanggalJastip" id="tanggalJastip" required>
+                    <option value="" disabled selected>-- Pilih Bulan --</option>
+                    <option value="Februari 2026">Februari 2026</option>
+                    <option value="Maret 2026">Maret 2026</option>
+                    <option value="April 2026">April 2026</option>
+                    <option value="Mei 2026">Mei 2026</option>
+                    <option value="Juni 2026">Juni 2026</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Kode Voucher (Opsional)</label>
+                <input type="text" name="kodeVoucher" placeholder="Masukkan kode jika ada">
+            </div>
+        </section>
+
+        <section class="form-section">
+            <div class="section-title">Data Pengirim di Indonesia</div>
+            <div class="input-group">
+                <label class="required">Nama Lengkap</label>
+                <input type="text" id="nama" name="nama" placeholder="Nama Pengirim" required>
+            </div>
+            <div class="input-group">
+                <label class="required">WhatsApp (Indonesia)</label>
+                <input type="tel" id="whatsapp" name="whatsapp" placeholder="Contoh: 0812xxxx" required>
+            </div>
+        </section>
+
+        <section class="form-section">
+            <div class="section-title">Data Penerima di Jepang</div>
+            <div class="input-group">
+                <label class="required">Nama Penerima</label>
+                <input type="text" id="nama-penerima" name="namaPenerima" required>
+            </div>
+            <div class="input-group">
+                <label class="required">No. Telepon Jepang (11 Digit)</label>
+                <input type="tel" id="whatsapp-penerima" name="whatsappPenerima" placeholder="080/090xxxx (Angka saja)" required>
+            </div>
+            
+            <div class="input-group">
+                <label class="required">Kode Pos (7 Digit)</label>
+                <input type="number" id="kodePosJepang" name="kodePosJepang" placeholder="Contoh: 4560021" required>
+            </div>
+
+            <div class="input-group">
+                <label class="required">Detail Alamat Jepang</label>
+                <div class="japan-grid">
+                    <div class="full-col">
+                        <div class="sub-lbl">Perfektur (Todofuken)</div>
+                        <select id="addr_pref" name="addr_pref" class="addr-part" required>
+                            <option value="" disabled selected>Pilih Perfektur...</option>
+                            <option value="Hokkaido">Hokkaido</option><option value="Aomori">Aomori</option><option value="Iwate">Iwate</option>
+                            <option value="Miyagi">Miyagi</option><option value="Akita">Akita</option><option value="Yamagata">Yamagata</option>
+                            <option value="Fukushima">Fukushima</option><option value="Ibaraki">Ibaraki</option><option value="Tochigi">Tochigi</option>
+                            <option value="Gunma">Gunma</option><option value="Saitama">Saitama</option><option value="Chiba">Chiba</option>
+                            <option value="Tokyo">Tokyo</option><option value="Kanagawa">Kanagawa</option><option value="Niigata">Niigata</option>
+                            <option value="Toyama">Toyama</option><option value="Ishikawa">Ishikawa</option><option value="Fukui">Fukui</option>
+                            <option value="Yamanashi">Yamanashi</option><option value="Nagano">Nagano</option><option value="Gifu">Gifu</option>
+                            <option value="Shizuoka">Shizuoka</option><option value="Aichi">Aichi</option><option value="Mie">Mie</option>
+                            <option value="Shiga">Shiga</option><option value="Kyoto">Kyoto</option><option value="Osaka">Osaka</option>
+                            <option value="Hyogo">Hyogo</option><option value="Nara">Nara</option><option value="Wakayama">Wakayama</option>
+                            <option value="Tottori">Tottori</option><option value="Shimane">Shimane</option><option value="Okayama">Okayama</option>
+                            <option value="Hiroshima">Hiroshima</option><option value="Yamaguchi">Yamaguchi</option><option value="Tokushima">Tokushima</option>
+                            <option value="Kagawa">Kagawa</option><option value="Ehime">Ehime</option><option value="Kochi">Kochi</option>
+                            <option value="Fukuoka">Fukuoka</option><option value="Saga">Saga</option><option value="Nagasaki">Nagasaki</option>
+                            <option value="Kumamoto">Kumamoto</option><option value="Oita">Oita</option><option value="Miyazaki">Miyazaki</option>
+                            <option value="Kagoshima">Kagoshima</option><option value="Okinawa">Okinawa</option>
+                        </select>
+                    </div>
+                    <div>
+                        <div class="sub-lbl">Kota/Wilayah</div>
+                        <input type="text" id="addr_city" name="addr_city" class="addr-part" placeholder="Nagoya-shi" required>
+                    </div>
+                    <div>
+                        <div class="sub-lbl">Chome-Banchi</div>
+                        <input type="text" id="addr_street" name="addr_street" class="addr-part" placeholder="Nishiki 3-15-1" required>
+                    </div>
+                    <div>
+                        <div class="sub-lbl">Gedung (Opsional)</div>
+                        <input type="text" id="addr_bldg" name="addr_bldg" class="addr-part" placeholder="Nama Apartemen">
+                    </div>
+                    <div>
+                        <div class="sub-lbl">No. Kamar/Bangunan</div>
+                        <input type="text" id="addr_room" name="addr_room" class="addr-part" placeholder="101" required>
+                    </div>
+                </div>
+                <textarea id="alamatJepang" name="alamatJepang" style="display:none;"></textarea>
+            </div>
+
+            <div class="input-group" style="margin-top: 25px; border-top: 1px dashed #cbd5e1; padding-top: 15px;">
+                <label class="required">Upload Foto KTP Jepang/Zairyu Card (Wajib)</label>
+                
+                <div class="file-upload-wrapper">
+                    <div style="font-size: 2rem;">📸</div>
+                    <div style="font-size: 0.9rem; color: var(--text-light);">Klik untuk upload dokumen</div>
+                    <input type="file" id="foto" multiple accept="image/*">
+                </div>
+                
+                <div id="scan-status"></div>
+                <div id="preview-container"></div>
+            </div>
+        </section>
+
+        <section class="form-section">
+            <div class="section-title">📦 Detail Barang</div>
+            <div class="input-group">
+                <label class="required">List Barang & Jumlah</label>
+                <textarea id="barangJastip" name="barangJastip" rows="4" placeholder="1. Tas Laptop (1 pcs)&#10;2. Sepatu (1 pasang)" required></textarea>
+            </div>
+            <div class="input-group">
+                <label class="required">Ada yang perlu di belanjakan?</label>
+                <div class="radio-grid">
+                    <label class="radio-item">
+                        <input type="radio" name="perluBelanja" value="Ya" required>
+                        <div class="radio-content">Ya, Ada</div>
+                    </label>
+                    <label class="radio-item">
+                        <input type="radio" name="perluBelanja" value="Tidak" required>
+                        <div class="radio-content">Tidak Perlu</div>
+                    </label>
+                </div>
+            </div>
+        </section>
+
+        <section class="form-section">
+            <div class="section-title">🚚 Jadwal Pengiriman & Info</div>
+            <div class="input-group">
+                <label class="required">Jam Pengiriman (Jepang)</label>
+                <select name="jamKirim" required>
+                    <option value="Pagi - Siang">Pagi - Siang</option>
+                    <option value="14:00 - 16:00">14:00 - 16:00</option>
+                    <option value="16:00 - 18:00">16:00 - 18:00</option>
+                    <option value="18:00 - 20:00">18:00 - 20:00</option>
+                    <option value="19:00 - 21:00">19:00 - 21:00</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label class="required">Kontak Sosmed (ID Line/IG)</label>
+                <input type="text" name="akunSosmed" placeholder="@username" required>
+            </div>
+            <div class="input-group">
+                <label>Tau Jastip Dari?</label>
+                <select name="sumberInfo">
+                    <option value="Instagram">Instagram</option>
+                    <option value="Website">Website</option>
+                    <option value="Lainnya">Lainnya</option>
+                </select>
+            </div>
+        </section>
+
+    </form>
+</div>
+
+<div class="fixed-footer">
+    <button type="button" class="btn-submit" id="mainSubmitBtn">✨ Kirim Formulir</button>
+</div>
+
+<div id="consent-overlay" class="overlay">
+    <div class="modal-box">
+        <h3 style="text-align: center; color: var(--primary); margin-top:0;">📋 Syarat & Ketentuan</h3>
+        <div class="modal-scroll" id="terms-text">
+            <p><strong>⚠️ Harap baca dengan saksama dan scroll sampai habis:</strong></p>
+            <ul>
+                <li><strong>Barang Legal:</strong> Barang yang dikirim adalah barang legal dan tidak melanggar hukum di Indonesia maupun Jepang. Dilarang keras mengirim: Obat-obatan terlarang (Narkoba), Senjata Api, Senjata Tajam, Bahan Peledak, Barang Mudah Terbakar, Barang Palsu/KW, Uang Palsu.</li>
+                
+                <div style="text-align: center; margin: 15px 0;">
+                    <img src="https://yanoshijapan.github.io/asetonline/barangumum.jpg" alt="Barang Dilarang Umum">
+                    <img src="https://yanoshijapan.github.io/asetonline/barangspesifik.jpg" alt="Barang Dilarang Spesifik">
+                </div>
+
+                <li><strong style="color: var(--error);">PENTING:</strong> Jika barang terlarang tersebut tetap dikirim ke basecamp kami, maka kami akan kembalikan barang tersebut ke pengirim (Retur) dengan ongkos kirim ditanggung pengirim.</li>
+                <li><strong>Tanggung Jawab:</strong> Kami tidak bertanggung jawab atas kerusakan barang yang disebabkan oleh pihak ketiga (Maskapai Penerbangan / Kurir Lokal Jepang).</li>
+                <li><strong>Keterlambatan:</strong> Keterlambatan pengiriman yang disebabkan oleh faktor di luar kendali kami (Cuaca buruk, Delay Pesawat, Pemeriksaan Bea Cukai) akan diinformasikan sesegera mungkin.</li>
+                <li><strong>Pajak & Bea Cukai:</strong> Pajak bea cukai Jepang (jika ada) akan menjadi tanggung jawab penerima paket di Jepang.</li>
+                <li style="margin-bottom: 50px;"><strong>Silakan scroll sampai habis untuk membuka tombol setuju.</strong></li>
+            </ul>
+        </div>
+        <div class="modal-actions">
+            <div style="display:flex; gap:10px; align-items:center; margin-bottom:10px;">
+                <input type="checkbox" id="consent-checkbox" disabled>
+                <label for="consent-checkbox" style="font-size:0.9rem; font-weight:normal; margin:0;">Saya menyetujui semua S&K.</label>
+            </div>
+            <button id="agree-button" class="btn-modal btn-primary-modal" disabled>Setuju & Lanjutkan</button>
+        </div>
+    </div>
+</div>
+
+<div id="ocr-warning-overlay" class="overlay">
+    <div class="modal-box" style="text-align: center;">
+        <div style="font-size: 3rem;">⚠️</div>
+        <h3>Foto Tidak Valid</h3>
+        <p style="color: #64748b; font-size: 0.95rem;">Foto yang di upload terdeteksi bukan dokumen yang sah atau terlalu buram.</p>
+        <div class="warning-box" style="text-align: left; font-size: 0.85rem;">
+            <strong>Pastikan fotomu:</strong>
+            <ul style="margin: 5px 0; padding-left: 20px;">
+                <li>Memiliki teks yang jelas (Nama/Nomor/Alamat).</li>
+                <li>Bukan foto benda asing (meja/lantai/pemandangan).</li>
+                <li>Memiliki karakter Huruf Jepang & Angka.</li>
+            </ul>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-modal btn-primary-modal" id="btn-ocr-retry">📸 Foto Ulang</button>
+            <button class="btn-modal btn-secondary-modal" id="btn-ocr-force" style="background:#fff; border:1px solid #ddd; color:#888;">Paksa Pakai (Tidak Disarankan)</button>
+        </div>
+    </div>
+</div>
+
+<div id="address-overlay" class="overlay">
+    <div class="modal-box" style="text-align: center;">
+        <div style="font-size: 3rem;">⚠️</div>
+        <h3>Konfirmasi Alamat</h3>
+        <div class="warning-box" style="text-align: left;">
+            Pastikan alamat Jepang sudah 100% Benar.<br><br>
+            Kesalahan alamat yang menyebabkan barang retur/hilang oleh kurir Jepang (Yamato/Japan Post) <strong>di luar tanggung jawab kami.</strong>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-modal btn-secondary-modal" onclick="closeOverlay('address-overlay')">Periksa Lagi</button>
+            <button class="btn-modal btn-primary-modal" id="btn-addr-confirm">Alamat Sudah Benar ➜</button>
+        </div>
+    </div>
+</div>
+
+<div id="statement-overlay" class="overlay">
+    <div class="modal-box">
+        <h3 style="text-align: center; color: var(--primary); margin-top:0;">Pernyataan Pengirim</h3>
+        <div class="modal-scroll" style="background: #fff; border:none;">
+            <p>Saya yang bertanda tangan di bawah ini:</p>
+            <p><strong>Nama:</strong> <span id="stmt-name">-</span><br><strong>Tanggal:</strong> <span id="stmt-date">-</span></p>
+            <p>Menyatakan bahwa paket saya <strong>AMAN</strong> dan <strong>BUKAN BARANG TERLARANG</strong> (Narkoba/Senjata/dll).</p>
+            <p>Jika ditemukan barang terlarang, saya bersedia menanggung segala risiko, biaya retur, atau pemusnahan barang.</p>
+        </div>
+        <div class="modal-actions">
+            <button class="btn-modal btn-secondary-modal" onclick="closeOverlay('statement-overlay')">Batal</button>
+            <button class="btn-modal btn-primary-modal" id="btn-final-send">Setuju & Kirim Data 🚀</button>
+        </div>
+    </div>
+</div>
+
+<div id="loader">
+    <div class="spinner"></div>
+    <div style="font-weight: bold; color: var(--primary);">Mengirim Form...</div>
+    <div style="font-size: 0.8rem; color: #666; margin-top: 5px;">Mohon jangan tutup halaman ini</div>
+</div>
+
+<div id="success-overlay" class="overlay">
+    <div class="modal-box" style="text-align: center;">
+        <div style="font-size: 4rem;">🎉</div>
+        <h2 style="color: var(--success-dark);">Berhasil!</h2>
+        <p>Data jastip Kamu sudah kami terima. Silakan konfirmasi ke admin.</p>
+        <div class="modal-actions">
+            <a href="https://line.me/ti/p/@506hjesi" class="btn-modal btn-primary-modal" style="text-decoration:none; display:block; background:#06c755; margin-bottom:10px;">Konfirmasi Line (Rekomendasi)</a>
+            <a href="https://www.instagram.com/yanoshi_jastip" class="btn-modal btn-secondary-modal" style="text-decoration:none; display:block; border: 2px solid #C13584; color: #C13584;">Konfirmasi Instagram</a>
+            <button onclick="location.reload()" class="btn-modal btn-secondary-modal" style="margin-top:15px; border:none; color:#888;">Isi Form Lagi</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // === KONFIGURASI ===
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzP6vX9FwdEJxyFCwv3-SwRr1UUjwkbQfosPV7KXJudnKlTA3OKYHfQGAjolzJ3_WlAgg/exec';
+    const SAVE_KEY = 'yanoshi_autosave_v3'; // Key untuk penyimpanan lokal
+
+    // VARIABLES
+    let uploadedFiles = [];
+    let isKtpValid = false;
+    let tempFiles = []; 
+
+    // === 1. POPUP S&K ===
+    document.addEventListener("DOMContentLoaded", () => {
+        const overlay = document.getElementById('consent-overlay');
+        const text = document.getElementById('terms-text');
+        const check = document.getElementById('consent-checkbox');
+        const btn = document.getElementById('agree-button');
+
+        if (!localStorage.getItem('yanoshi_consent_v3')) {
+            overlay.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        } else {
+            loadDraft(); // Load data jika user sudah pernah setuju
+        }
+
+        text.addEventListener('scroll', () => {
+            if (text.scrollTop + text.clientHeight >= text.scrollHeight - 20) {
+                check.disabled = false;
+            }
+        });
+
+        check.addEventListener('change', () => { btn.disabled = !check.checked; });
+
+        btn.addEventListener('click', () => {
+            overlay.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            localStorage.setItem('yanoshi_consent_v3', 'true');
+            loadDraft();
+        });
+    });
+
+    // === 2. ADDRESS LOGIC ===
+    const addrParts = document.querySelectorAll('.addr-part');
+    const hiddenAddr = document.getElementById('alamatJepang');
+
+    addrParts.forEach(el => {
+        el.addEventListener('input', () => {
+            const pref = document.getElementById('addr_pref').value || '';
+            const city = document.getElementById('addr_city').value || '';
+            const street = document.getElementById('addr_street').value || '';
+            const bldg = document.getElementById('addr_bldg').value || '';
+            const room = document.getElementById('addr_room').value || '';
+            hiddenAddr.value = `${pref}, ${city}, ${street}, ${bldg}, ${room}`;
+            saveDraft();
+        });
+    });
+
+    // === 3. OCR LOGIC ===
+    const fotoInput = document.getElementById('foto');
+    const statusBox = document.getElementById('scan-status');
+    const ocrWarning = document.getElementById('ocr-warning-overlay');
+
+    function resizeImageForOCR(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    requestAnimationFrame(() => {
+                        const canvas = document.createElement('canvas');
+                        const maxDim = 700; 
+                        let width = img.width, height = img.height;
+                        if (width > height) {
+                            if (width > maxDim) { height *= maxDim / width; width = maxDim; }
+                        } else {
+                            if (height > maxDim) { width *= maxDim / height; height = maxDim; }
+                        }
+                        canvas.width = width; canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        canvas.toBlob((blob) => { resolve(blob); }, 'image/jpeg', 0.7);
+                    });
+                };
+                img.onerror = () => reject(new Error("Gagal load gambar"));
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+    }
+
+    function isValidDocumentText(text) {
+        const cleanText = text.replace(/[^a-zA-Z0-9\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f\u4e00-\u9faf]/g, ' '); 
+        const upperText = cleanText.toUpperCase();
+        if (cleanText.replace(/\s/g, '').length < 8) return false;
+
+        let score = 0;
+        const keywords = ["NIK", "PROVINSI", "KABUPATEN", "KOTA", "LAKI-LAKI", "PEREMPUAN", "AGAMA", "KAWIN", "CARD", "RESIDENCE", "PERIOD", "DATE", "ADDRESS", "NUMBER", "NAME", "MOJ", "JAPAN"];
+        keywords.forEach(word => { if (upperText.includes(word)) score += 2; });
+        if (/[0-9]{6,}/.test(cleanText)) score += 1;
+        if (/[A-Z]{4,}/.test(upperText)) score += 1;
+        if (/[\u3040-\u309f\u30a0-\u30ff\u4e00-\u9faf]/.test(cleanText)) score += 3;
+
+        return score >= 2;
+    }
+
+    fotoInput.addEventListener('change', async (e) => {
+        const files = Array.from(e.target.files);
+        if (files.length === 0) return;
+
+        statusBox.style.display = 'block';
+        statusBox.className = 'scan-load';
+        statusBox.innerHTML = '<div class="spinner" style="width:15px; height:15px; border-width:2px; display:inline-block; margin:0 5px 0 0; vertical-align:middle;"></div> Memproses...';
+        
+        tempFiles = files;
+        let validDocsFound = false;
+
+        try {
+            if(files.length > 3) { alert("Maksimal 3 foto."); fotoInput.value = ''; return; }
+
+            for (const file of files) {
+                const resizedBlob = await resizeImageForOCR(file);
+                const { data: { text } } = await Tesseract.recognize(resizedBlob, 'eng');
+                if (isValidDocumentText(text)) validDocsFound = true;
+            }
+
+            if (validDocsFound) {
+                acceptFiles(tempFiles);
+                statusBox.className = 'scan-ok';
+                statusBox.innerHTML = '✅ Foto Valid';
+            } else {
+                statusBox.style.display = 'none';
+                ocrWarning.style.display = 'flex';
+            }
+        } catch (err) {
+            console.error(err);
+            acceptFiles(tempFiles);
+            statusBox.className = 'scan-err';
+            statusBox.innerHTML = '⚠️ Foto tersimpan (Scan error).';
+        }
+        fotoInput.value = '';
+    });
+
+    document.getElementById('btn-ocr-retry').addEventListener('click', () => {
+        ocrWarning.style.display = 'none';
+        tempFiles = []; 
+        fotoInput.click();
+    });
+
+    document.getElementById('btn-ocr-force').addEventListener('click', () => {
+        ocrWarning.style.display = 'none';
+        acceptFiles(tempFiles);
+        statusBox.style.display = 'block';
+        statusBox.className = 'scan-err'; 
+        statusBox.innerHTML = '⚠️ Foto diterima manual.';
+    });
+
+    function acceptFiles(files) {
+        files.forEach(f => {
+            if(!uploadedFiles.includes(f)) {
+                uploadedFiles.push(f);
+                renderPreview(f);
+            }
+        });
+        isKtpValid = true;
+        saveDraft();
+    }
+
+    function renderPreview(file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const div = document.createElement('div');
+            div.className = 'img-card';
+            div.innerHTML = `<img src="${e.target.result}"><div class="del-btn">✕</div>`;
+            div.querySelector('.del-btn').onclick = () => {
+                uploadedFiles = uploadedFiles.filter(f => f !== file);
+                div.remove();
+                if(uploadedFiles.length === 0) {
+                    isKtpValid = false;
+                    statusBox.style.display = 'none';
+                }
+            };
+            document.getElementById('preview-container').appendChild(div);
+        };
+        reader.readAsDataURL(file);
+    }
+
+    // === 4. AUTO SAVE (FIXED: NOW INCLUDES ADDRESS) ===
+    function saveDraft() {
+        const form = document.getElementById('submissionForm');
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData);
+        
+        // Simpan manual radio button
+        const radio = form.querySelector('input[name="perluBelanja"]:checked');
+        if(radio) data.perluBelanja = radio.value;
+
+        localStorage.setItem(SAVE_KEY, JSON.stringify(data));
+    }
+
+    function loadDraft() {
+        const raw = localStorage.getItem(SAVE_KEY);
+        if (raw) {
+            try {
+                const data = JSON.parse(raw);
+                const form = document.getElementById('submissionForm');
+
+                // Loop untuk semua field yang punya NAME
+                for (const key in data) {
+                    const el = form.querySelector(`[name="${key}"]`);
+                    if (el) {
+                        if (el.type === 'radio') {
+                            const rad = form.querySelector(`[name="${key}"][value="${data[key]}"]`);
+                            if (rad) rad.checked = true;
+                        } else {
+                            el.value = data[key];
+                            // Trigger event input manual agar logika gabung alamat jalan
+                            el.dispatchEvent(new Event('input')); 
+                        }
+                    }
+                }
+            } catch(e) { console.error("Draft error:", e); }
+        }
+    }
+    
+    document.getElementById('submissionForm').addEventListener('input', saveDraft);
+
+    // === 5. SUBMIT FLOW ===
+    document.getElementById('mainSubmitBtn').addEventListener('click', () => {
+        const form = document.getElementById('submissionForm');
+        const inputs = form.querySelectorAll('input[required], select[required], textarea[required]');
+        let firstError = null;
+
+        for (const input of inputs) {
+            if (!input.value.trim()) {
+                input.style.borderColor = 'red';
+                if (!firstError) firstError = input;
+            } else {
+                input.style.borderColor = '#e2e8f0';
+            }
+        }
+
+        const radioGroups = ['perluBelanja']; 
+        radioGroups.forEach(name => {
+            if (!form.querySelector(`input[name="${name}"]:checked`)) {
+                if (!firstError) firstError = form.querySelector(`input[name="${name}"]`).closest('.radio-grid');
+            }
+        });
+
+        if (firstError) {
+            alert("Mohon lengkapi kolom bertanda *");
+            firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            if(firstError.focus) firstError.focus();
+            return;
+        }
+
+        if (uploadedFiles.length === 0) {
+            alert("Wajib upload foto KTP/Dokumen!");
+            document.getElementById('foto').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            return;
+        }
+
+        document.getElementById('address-overlay').style.display = 'flex';
+    });
+
+    document.getElementById('btn-addr-confirm').addEventListener('click', () => {
+        document.getElementById('address-overlay').style.display = 'none';
+        document.getElementById('stmt-name').innerText = document.getElementById('nama').value;
+        document.getElementById('stmt-date').innerText = new Date().toLocaleDateString('id-ID');
+        document.getElementById('statement-overlay').style.display = 'flex';
+    });
+
+    document.getElementById('btn-final-send').addEventListener('click', async () => {
+        document.getElementById('statement-overlay').style.display = 'none';
+        document.getElementById('loader').style.display = 'flex';
+
+        try {
+            const form = document.getElementById('submissionForm');
+            const data = Object.fromEntries(new FormData(form));
+            data.perluBelanja = form.querySelector('input[name="perluBelanja"]:checked')?.value || 'Tidak';
+
+            const fileData = [];
+            for (const file of uploadedFiles) {
+                fileData.push({
+                    fileName: file.name, mimeType: file.type, content: await getBase64(file)
+                });
+            }
+            
+            const payload = { ...data, files: fileData };
+            await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+
+            document.getElementById('loader').style.display = 'none';
+            document.getElementById('success-overlay').style.display = 'flex';
+            
+            localStorage.removeItem(SAVE_KEY); 
+            form.reset();
+            uploadedFiles = [];
+            document.getElementById('preview-container').innerHTML = '';
+            statusBox.style.display = 'none';
+
+        } catch (e) {
+            alert("Gagal kirim: " + e.message);
+            document.getElementById('loader').style.display = 'none';
+        }
+    });
+
+    function closeOverlay(id) { document.getElementById(id).style.display = 'none'; }
+    function getBase64(file) {
+        return new Promise((r) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => r(reader.result.split(',')[1]);
+        });
+    }
+
+</script>
+</body>
+</html>
