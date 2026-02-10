@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Yanoshi Jastip - Formulir</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #17a2b8;
+            --primary-dark: #117a8b;
+            --accent: #0ea5e9;
+            --surface: #ffffff;
+            --bg-color: #f0f4f8;
+            --text-main: #1e293b;
+            --text-light: #64748b;
+            --shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg-color);
+            color: var(--text-main);
+            margin: 0; padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            /* Background pattern halus */
+            background-image: radial-gradient(#e0e7ff 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        /* HEADER */
+        .header {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo-area {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+        .logo-area img { height: 40px; width: auto; }
+        .logo-area h1 { margin: 0; font-size: 1.5rem; color: var(--primary); font-weight: 800; }
+        .subtitle { font-size: 0.9rem; color: var(--text-light); margin: 0; }
+
+        /* MAIN CONTENT */
+        .container {
+            width: 90%;
+            max-width: 500px;
+            margin-top: 40px;
+            margin-bottom: 60px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* MENU CARDS */
+        .menu-card {
+            background: var(--surface);
+            border-radius: 20px;
+            padding: 25px;
+            text-decoration: none;
+            color: inherit;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 15px 35px -5px rgba(23, 162, 184, 0.2);
+        }
+
+        /* Icon Container */
+        .icon-box {
+            width: 60px;
+            height: 60px;
+            background: #eff6ff;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            flex-shrink: 0;
+        }
+
+        .text-content h2 { margin: 0 0 5px 0; font-size: 1.1rem; color: var(--text-main); }
+        .text-content p { margin: 0; font-size: 0.85rem; color: var(--text-light); }
+
+        /* Panah indikator */
+        .arrow {
+            margin-left: auto;
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        /* FOOTER */
+        .footer {
+            margin-top: auto;
+            padding: 20px;
+            text-align: center;
+            color: var(--text-light);
+            font-size: 0.8rem;
+        }
+        .social-links {
+            margin-top: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+        .social-links a {
+            text-decoration: none;
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* Animasi */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .menu-card { animation: fadeIn 0.5s ease backwards; }
+        .menu-card:nth-child(1) { animation-delay: 0.1s; }
+        .menu-card:nth-child(2) { animation-delay: 0.2s; }
+
+    </style>
+</head>
+<body>
+
+    <header class="header">
+        <div class="logo-area">
+            <img src="https://yanoshijapan.github.io/jastip/jastip%202.png" alt="Logo">
+            <h1>Yanoshi Jastip</h1>
+        </div>
+        <p class="subtitle">Pilih mau ikut Jastip dari Indonesia atau dari Jepang</p>
+    </header>
+
+    <div class="container">
+        
+        <a href="tesformidjp.html" class="menu-card">
+            <div class="icon-box">🛫</div>
+            <div class="text-content">
+                <h2>Dari Indo 🇮🇩 ➜ 🇯🇵 Jepang</h2>
+                <p>Kirim barang dari Indonesia ke Jepang.</p>
+            </div>
+            <div class="arrow">➜</div>
+        </a>
+
+        <a href="backupformjpid.html" class="menu-card">
+            <div class="icon-box">🛬</div>
+            <div class="text-content">
+                <h2>Dari Jepang 🇯🇵 ➜ 🇮🇩 Indo</h2>
+                <p>Kirim barang dari Jepang ke Indonesia.</p>
+            </div>
+            <div class="arrow">➜</div>
+        </a>
+
+        <div style="text-align: center; margin-top: 20px; padding: 15px; background: #e0f2fe; border-radius: 12px; color: #0369a1; font-size: 0.9rem;">
+            💡 <strong>Info:</strong> Pastikan Anda sudah membaca syarat & ketentuan sebelum mengisi formulir.
+        </div>
+
+    </div>
+
+    <footer class="footer">
+        © 2026 Yanoshi Jastip. All rights reserved.
+        <div class="social-links">
+            <a href="https://instagram.com/yanoshi_jastip">Instagram</a>
+            <a href="https://line.me/ti/p/@506hjesi">Line</a>
+        </div>
+    </footer>
+
+</body>
+</html>
